@@ -5,10 +5,12 @@ import * as dashboard from './dashboard.js';
 import * as trades from './trades.js';
 import * as journal from './journal.js';
 import * as settings from './settings.js';
+import * as exportPage from './export-page.js';
 
 registerRoute('dashboard', 'Dashboard', 'dashboard', dashboard.render);
 registerRoute('trades', 'Trades', 'trades', trades.render);
 registerRoute('journal', 'Journal', 'journal', journal.render);
+registerRoute('export', 'Export', 'export', exportPage.render);
 registerRoute('settings', 'Settings', 'settings', settings.render);
 
 startRouter(document.getElementById('nav'), document.getElementById('view'), 'dashboard');

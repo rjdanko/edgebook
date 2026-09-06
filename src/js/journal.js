@@ -1,6 +1,7 @@
 import { listJournalEntries, createJournalEntry, updateJournalEntry, deleteJournalEntry, listFieldDefs } from './api.js';
 import { mountAttachments } from './attachments-ui.js';
 import { renderCustomFieldRows, readCustomFieldValues } from './custom-fields.js';
+import { exportJournalEntry } from './export.js';
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -74,7 +75,10 @@ export async function render(container) {
       </div>
       <h2 class="section-title">Screenshots</h2>
       <div class="card" id="attachments"></div>
-      <button class="btn btn-secondary negative" id="delete-entry" style="margin-top:16px">Delete entry</button>
+      <div style="display:flex; gap: var(--space-3); margin-top:16px">
+        <button class="btn btn-secondary" id="export-entry">Export to PDF</button>
+        <button class="btn btn-secondary negative" id="delete-entry">Delete entry</button>
+      </div>
     `;
 
     mountAttachments(container.querySelector('#attachments'), 'journal', entry.id);
@@ -101,6 +105,8 @@ export async function render(container) {
       entries = await listJournalEntries();
       renderList();
     });
+
+    container.querySelector('#export-entry').addEventListener('click', () => exportJournalEntry(entry));
 
     container.querySelector('#delete-entry').addEventListener('click', async () => {
       if (!confirm('Delete this journal entry and its screenshots?')) return;

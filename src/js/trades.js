@@ -1,6 +1,7 @@
 import { listTrades, createTrade, updateTrade, deleteTrade, listFieldDefs } from './api.js';
 import { mountAttachments } from './attachments-ui.js';
 import { renderCustomFieldRows, readCustomFieldValues } from './custom-fields.js';
+import { exportTrade } from './export.js';
 
 function category(trade) {
   if (trade.is_breakeven) return 'breakeven';
@@ -120,7 +121,10 @@ export async function render(container) {
       </div>
       <h2 class="section-title">Screenshots</h2>
       <div class="card" id="attachments"></div>
-      <button class="btn btn-secondary negative" id="delete-trade" style="margin-top:16px">Delete trade</button>
+      <div style="display:flex; gap: var(--space-3); margin-top:16px">
+        <button class="btn btn-secondary" id="export-trade">Export to PDF</button>
+        <button class="btn btn-secondary negative" id="delete-trade">Delete trade</button>
+      </div>
     `;
 
     mountAttachments(container.querySelector('#attachments'), 'trade', trade.id);
@@ -153,6 +157,8 @@ export async function render(container) {
       trades = await listTrades();
       renderList();
     });
+
+    container.querySelector('#export-trade').addEventListener('click', () => exportTrade(trade));
 
     container.querySelector('#delete-trade').addEventListener('click', async () => {
       if (!confirm('Delete this trade and its screenshots?')) return;
