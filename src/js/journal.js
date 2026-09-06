@@ -1,5 +1,6 @@
-import { listJournalEntries, createJournalEntry, updateJournalEntry, deleteJournalEntry } from './api.js';
+import { listJournalEntries, createJournalEntry, updateJournalEntry, deleteJournalEntry, listFieldDefs } from './api.js';
 import { mountAttachments } from './attachments-ui.js';
+import { renderCustomFieldRows, readCustomFieldValues } from './custom-fields.js';
 
 function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -12,6 +13,7 @@ function excerpt(content) {
 
 export async function render(container) {
   let entries = await listJournalEntries();
+  const customFieldDefs = (await listFieldDefs('journal')).filter((d) => !d.is_default);
 
   function renderList() {
     container.innerHTML = `
@@ -68,6 +70,7 @@ export async function render(container) {
         ${field('Date', `<input type="date" data-field="date" value="${esc(entry.date)}" />`)}
         ${field('Type', `<input type="text" data-field="type" value="${esc(entry.type)}" placeholder="Empty" />`)}
         ${field('Content', `<textarea data-field="content" rows="12" placeholder="Empty">${esc(entry.content)}</textarea>`)}
+        ${renderCustomFieldRows(customFieldDefs, entry.custom_fields)}
       </div>
       <h2 class="section-title">Screenshots</h2>
       <div class="card" id="attachments"></div>
@@ -83,14 +86,15 @@ export async function render(container) {
         date: form.querySelector('[data-field=date]').value,
         type: form.querySelector('[data-field=type]').value,
         content: form.querySelector('[data-field=content]').value,
-        custom_fields: entry.custom_fields,
+        custom_fields: readCustomFieldValues(form, customFieldDefs),
       };
       const updated = await updateJournalEntry(entry.id, patch);
       Object.assign(entry, updated);
     }
 
-    container.querySelectorAll('.detail-form input, .detail-form textarea').forEach((el) => {
+    container.querySelectorAll('.detail-form input, .detail-form select, .detail-form textarea').forEach((el) => {
       el.addEventListener('blur', save);
+      if (el.tagName === 'SELECT' || el.type === 'checkbox') el.addEventListener('change', save);
     });
 
     container.querySelector('#back').addEventListener('click', async () => {

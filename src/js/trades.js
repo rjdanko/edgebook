@@ -1,5 +1,6 @@
-import { listTrades, createTrade, updateTrade, deleteTrade } from './api.js';
+import { listTrades, createTrade, updateTrade, deleteTrade, listFieldDefs } from './api.js';
 import { mountAttachments } from './attachments-ui.js';
+import { renderCustomFieldRows, readCustomFieldValues } from './custom-fields.js';
 
 function category(trade) {
   if (trade.is_breakeven) return 'breakeven';
@@ -30,6 +31,7 @@ const FILTERS = [
 
 export async function render(container) {
   let trades = await listTrades();
+  const customFieldDefs = (await listFieldDefs('trade')).filter((d) => !d.is_default);
   let activeFilter = 'all';
 
   function renderList() {
@@ -114,6 +116,7 @@ export async function render(container) {
         ${field('Confluences', `<textarea data-field="confluences" placeholder="Empty">${esc(trade.confluences)}</textarea>`)}
         ${field('Narrative', `<textarea data-field="narrative" placeholder="Empty">${esc(trade.narrative)}</textarea>`)}
         ${field('Emotions', `<textarea data-field="emotions" placeholder="Empty">${esc(trade.emotions)}</textarea>`)}
+        ${renderCustomFieldRows(customFieldDefs, trade.custom_fields)}
       </div>
       <h2 class="section-title">Screenshots</h2>
       <div class="card" id="attachments"></div>
@@ -135,7 +138,7 @@ export async function render(container) {
         confluences: form.querySelector('[data-field=confluences]').value,
         narrative: form.querySelector('[data-field=narrative]').value,
         emotions: form.querySelector('[data-field=emotions]').value,
-        custom_fields: trade.custom_fields,
+        custom_fields: readCustomFieldValues(form, customFieldDefs),
       };
       const updated = await updateTrade(trade.id, patch);
       Object.assign(trade, updated);

@@ -1,10 +1,12 @@
 mod attachments;
 mod db;
+mod field_defs;
 mod journal;
 mod objectives;
 mod trades;
 
 use db::AppState;
+use rusqlite::params;
 use tauri::Manager;
 
 #[tauri::command]
@@ -22,6 +24,17 @@ fn get_settings(state: tauri::State<AppState>) -> Result<std::collections::HashM
     Ok(map)
 }
 
+#[tauri::command]
+fn update_setting(state: tauri::State<AppState>, key: String, value: String) -> Result<(), String> {
+    let conn = state.conn.lock().map_err(|e| e.to_string())?;
+    conn.execute(
+        "INSERT INTO settings (key, value) VALUES (?1, ?2) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+        params![key, value],
+    )
+    .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -35,6 +48,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             get_settings,
+            update_setting,
             trades::list_trades,
             trades::create_trade,
             trades::update_trade,
@@ -44,6 +58,10 @@ pub fn run() {
             journal::update_journal_entry,
             journal::delete_journal_entry,
             objectives::list_objectives,
+            field_defs::list_field_defs,
+            field_defs::create_field_def,
+            field_defs::update_field_def,
+            field_defs::delete_field_def,
             attachments::save_attachment,
             attachments::list_attachments,
             attachments::delete_attachment,

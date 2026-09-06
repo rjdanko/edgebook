@@ -41,6 +41,26 @@ export function listObjectives() {
   return invoke('list_objectives');
 }
 
+export function updateSetting(key, value) {
+  return invoke('update_setting', { key, value });
+}
+
+export function listFieldDefs(entity) {
+  return invoke('list_field_defs', { entity });
+}
+
+export function createFieldDef(input) {
+  return invoke('create_field_def', { input });
+}
+
+export function updateFieldDef(id, label, hidden, sortOrder, options) {
+  return invoke('update_field_def', { id, label, hidden, sortOrder, options });
+}
+
+export function deleteFieldDef(id) {
+  return invoke('delete_field_def', { id });
+}
+
 export function saveAttachment(ownerType, ownerId, dataBase64, ext) {
   return invoke('save_attachment', { ownerType, ownerId, dataBase64, ext });
 }
