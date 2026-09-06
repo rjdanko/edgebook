@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EdgeBook</title>
+    <script>
+      // Pre-paint theme boot: apply the last-known theme/accent from localStorage
+      // synchronously so there is no light-mode flash while the DB settings load.
+      (function () {
+        try {
+          var theme = localStorage.getItem('eb-theme');
+          var accent = localStorage.getItem('eb-accent');
+          if (theme && theme !== 'system') document.documentElement.setAttribute('data-theme', theme);
+          if (accent) document.documentElement.style.setProperty('--accent', accent);
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <div id="app">
+      <aside class="sidebar">
+        <nav id="nav"></nav>
+      </aside>
+      <main id="view"></main>
+    </div>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

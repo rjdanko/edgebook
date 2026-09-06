@@ -1,0 +1,66 @@
+/* Design tokens. Light palette on :root; dark overrides only what changes.
+   Order matters: system-preference block first, explicit [data-theme] second,
+   so an explicit choice always wins over prefers-color-scheme. */
+:root {
+  --bg-canvas: #ffffff;
+  --bg-surface: #f7f7f5;
+  --border-subtle: #e9e9e7;
+  --text-primary: #1f1f1f;
+  --text-secondary: #6b6b68;
+  --text-disabled: #b8b8b5;
+  --accent: #2a9d8f;
+  --accent-fg: #ffffff;
+  --positive: #1e8e5a;
+  --negative: #d1453b;
+  --neutral-warn: #b8860b;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --text-display: 600 28px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --text-heading: 600 18px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --text-body: 400 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --text-label: 500 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --text-caption: 400 12px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --radius-button: 6px;
+  --radius-card: 8px;
+  --motion-fast: 130ms ease-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-canvas: #191919;
+    --bg-surface: #202020;
+    --border-subtle: #2f2f2f;
+    --text-primary: #ededec;
+    --text-secondary: #9b9b98;
+    --text-disabled: #5c5c5a;
+    --positive: #4caf7d;
+    --negative: #e5675f;
+    --neutral-warn: #d4a017;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg-canvas: #191919;
+  --bg-surface: #202020;
+  --border-subtle: #2f2f2f;
+  --text-primary: #ededec;
+  --text-secondary: #9b9b98;
+  --text-disabled: #5c5c5a;
+  --positive: #4caf7d;
+  --negative: #e5675f;
+  --neutral-warn: #d4a017;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}

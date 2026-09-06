@@ -1,0 +1,182 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  font: var(--text-body);
+}
+
+#app {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-subtle);
+  padding: var(--space-4) 0;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  font: var(--text-body);
+  cursor: pointer;
+  background: none;
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
+  width: 100%;
+  text-align: left;
+  transition: background var(--motion-fast), color var(--motion-fast);
+}
+
+.nav-item:hover {
+  background: var(--border-subtle);
+}
+
+.nav-item.active {
+  color: var(--text-primary);
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.nav-item svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+}
+
+/* Main content */
+main {
+  flex: 1;
+  padding: var(--space-6);
+  max-width: 1100px;
+}
+
+h1.page-title {
+  font: var(--text-display);
+  margin: 0 0 var(--space-6);
+}
+
+h2.section-title {
+  font: var(--text-heading);
+  margin: 0 0 var(--space-4);
+}
+
+/* Cards */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-card);
+  padding: var(--space-5);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-4);
+}
+
+.stat-label {
+  font: var(--text-caption);
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.stat-value {
+  font: var(--text-display);
+}
+
+/* Tables */
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  font: var(--text-label);
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  text-align: left;
+  padding: var(--space-3);
+}
+
+.data-table td {
+  padding: 0 var(--space-3);
+  height: 40px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.data-table td.numeric,
+.data-table th.numeric {
+  text-align: right;
+}
+
+.data-table tbody tr:hover {
+  background: var(--bg-surface);
+}
+
+/* Buttons */
+.btn {
+  font: var(--text-body);
+  border-radius: var(--radius-button);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background var(--motion-fast), border-color var(--motion-fast);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.btn-secondary {
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+/* Pills / tags */
+.pill {
+  display: inline-block;
+  border-radius: 999px;
+  padding: var(--space-1) var(--space-3);
+  font: var(--text-caption);
+}
+
+/* Semantic text */
+.positive { color: var(--positive); }
+.negative { color: var(--negative); }
+.neutral-warn { color: var(--neutral-warn); }
+
+/* Focus states */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.empty-placeholder {
+  color: var(--text-disabled);
+}
