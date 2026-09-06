@@ -1,6 +1,7 @@
 mod attachments;
 mod db;
 mod journal;
+mod objectives;
 mod trades;
 
 use db::AppState;
@@ -42,6 +43,7 @@ pub fn run() {
             journal::create_journal_entry,
             journal::update_journal_entry,
             journal::delete_journal_entry,
+            objectives::list_objectives,
             attachments::save_attachment,
             attachments::list_attachments,
             attachments::delete_attachment,

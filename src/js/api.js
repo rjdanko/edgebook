@@ -37,6 +37,10 @@ export function deleteJournalEntry(id) {
   return invoke('delete_journal_entry', { id });
 }
 
+export function listObjectives() {
+  return invoke('list_objectives');
+}
+
 export function saveAttachment(ownerType, ownerId, dataBase64, ext) {
   return invoke('save_attachment', { ownerType, ownerId, dataBase64, ext });
 }

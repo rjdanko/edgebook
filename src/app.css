@@ -300,6 +300,53 @@ table.data-table {
   color: var(--negative);
 }
 
+/* Calendar */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+}
+
+.calendar-dow {
+  font: var(--text-label);
+  color: var(--text-secondary);
+  text-align: center;
+  padding-bottom: var(--space-1);
+}
+
+.calendar-cell {
+  aspect-ratio: 1;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-button);
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  background: var(--bg-surface);
+}
+
+.calendar-cell.empty {
+  border: none;
+  background: none;
+}
+
+.calendar-cell.positive { background: color-mix(in srgb, var(--positive) 14%, var(--bg-surface)); }
+.calendar-cell.negative { background: color-mix(in srgb, var(--negative) 14%, var(--bg-surface)); }
+.calendar-cell.neutral-warn { background: color-mix(in srgb, var(--neutral-warn) 14%, var(--bg-surface)); }
+
+.calendar-day {
+  font: var(--text-caption);
+  color: var(--text-secondary);
+}
+
+.calendar-pl {
+  font: var(--text-label);
+}
+
+.pill.positive { background: color-mix(in srgb, var(--positive) 18%, transparent); color: var(--positive); }
+.pill.negative { background: color-mix(in srgb, var(--negative) 18%, transparent); color: var(--negative); }
+
 /* Journal */
 .journal-list {
   display: flex;
