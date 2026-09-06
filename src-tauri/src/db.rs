@@ -6,7 +6,10 @@ use std::sync::Mutex;
 
 const MIGRATION_001: &str = include_str!("../migrations/001_init.sql");
 
-pub struct DbState(pub Mutex<Connection>);
+pub struct AppState {
+    pub conn: Mutex<Connection>,
+    pub data_root: PathBuf,
+}
 
 #[derive(Serialize, Deserialize)]
 struct AppConfig {
@@ -54,9 +57,10 @@ pub fn set_data_root(app_config_dir: &Path, new_root: &Path) -> std::io::Result<
 
 /// Creates attachments/ and exports/ under the data root, opens edgebook.db,
 /// runs pending migrations, and seeds defaults on first launch.
+/// Per-owner attachment subfolders (attachments/{trade,journal}/{id}/) are
+/// created on demand by attachments::save_attachment.
 pub fn open(data_root: &Path) -> rusqlite::Result<Connection> {
-    fs::create_dir_all(data_root.join("attachments").join("trades")).ok();
-    fs::create_dir_all(data_root.join("attachments").join("journal")).ok();
+    fs::create_dir_all(data_root.join("attachments")).ok();
     fs::create_dir_all(data_root.join("exports")).ok();
 
     let conn = Connection::open(data_root.join("edgebook.db"))?;

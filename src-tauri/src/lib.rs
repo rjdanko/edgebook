@@ -1,11 +1,13 @@
+mod attachments;
 mod db;
+mod trades;
 
-use db::DbState;
+use db::AppState;
 use tauri::Manager;
 
 #[tauri::command]
-fn get_settings(state: tauri::State<DbState>) -> Result<std::collections::HashMap<String, String>, String> {
-    let conn = state.0.lock().map_err(|e| e.to_string())?;
+fn get_settings(state: tauri::State<AppState>) -> Result<std::collections::HashMap<String, String>, String> {
+    let conn = state.conn.lock().map_err(|e| e.to_string())?;
     let mut stmt = conn.prepare("SELECT key, value FROM settings").map_err(|e| e.to_string())?;
     let rows = stmt
         .query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)))
@@ -26,10 +28,19 @@ pub fn run() {
             let config_dir = app.path().app_config_dir().expect("no app config dir");
             let data_root = db::resolve_data_root(&config_dir);
             let conn = db::open(&data_root).expect("failed to open database");
-            app.manage(DbState(std::sync::Mutex::new(conn)));
+            app.manage(AppState { conn: std::sync::Mutex::new(conn), data_root });
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![get_settings])
+        .invoke_handler(tauri::generate_handler![
+            get_settings,
+            trades::list_trades,
+            trades::create_trade,
+            trades::update_trade,
+            trades::delete_trade,
+            attachments::save_attachment,
+            attachments::list_attachments,
+            attachments::delete_attachment,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
