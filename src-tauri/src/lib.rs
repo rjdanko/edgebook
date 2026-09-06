@@ -1,5 +1,6 @@
 mod attachments;
 mod db;
+mod journal;
 mod trades;
 
 use db::AppState;
@@ -37,6 +38,10 @@ pub fn run() {
             trades::create_trade,
             trades::update_trade,
             trades::delete_trade,
+            journal::list_journal_entries,
+            journal::create_journal_entry,
+            journal::update_journal_entry,
+            journal::delete_journal_entry,
             attachments::save_attachment,
             attachments::list_attachments,
             attachments::delete_attachment,

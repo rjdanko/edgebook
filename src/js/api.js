@@ -21,6 +21,22 @@ export function deleteTrade(id) {
   return invoke('delete_trade', { id });
 }
 
+export function listJournalEntries() {
+  return invoke('list_journal_entries');
+}
+
+export function createJournalEntry(input) {
+  return invoke('create_journal_entry', { input });
+}
+
+export function updateJournalEntry(id, input) {
+  return invoke('update_journal_entry', { id, input });
+}
+
+export function deleteJournalEntry(id) {
+  return invoke('delete_journal_entry', { id });
+}
+
 export function saveAttachment(ownerType, ownerId, dataBase64, ext) {
   return invoke('save_attachment', { ownerType, ownerId, dataBase64, ext });
 }
