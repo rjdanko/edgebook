@@ -19,10 +19,6 @@ I built this to replace a Notion setup that kept breaking in two specific ways: 
 ![Trade log](docs/screenshots/Trades.png)
 ![Journal](docs/screenshots/Journal.png)
 
-## Why Tauri instead of Electron
-
-Idle memory and startup time matter more to me than cross-platform breadth right now. A Rust core with the OS webview keeps the app under 150MB idle and starting in under 2 seconds, which an Electron shell running two Chromium copies wasn't going to hit. The tradeoff is Windows-only for now; Mac and Linux aren't built or tested.
-
 ## Data and storage
 
 Everything lives under one `EdgeBook/` folder:
