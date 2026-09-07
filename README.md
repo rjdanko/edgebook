@@ -13,6 +13,12 @@ I built this to replace a Notion setup that kept breaking in two specific ways: 
 - **Custom fields** - nothing on Trade or Journal entries is hardcoded. Add, rename, reorder, or hide fields from Settings.
 - **PDF export** - single entry, a date range, or everything, rendered as print-ready HTML.
 
+## Screenshots
+
+![Dashboard](docs/screenshots/Dashboard.png)
+![Trade log](docs/screenshots/Trades.png)
+![Journal](docs/screenshots/Journal.png)
+
 ## Why Tauri instead of Electron
 
 Idle memory and startup time matter more to me than cross-platform breadth right now. A Rust core with the OS webview keeps the app under 150MB idle and starting in under 2 seconds, which an Electron shell running two Chromium copies wasn't going to hit. The tradeoff is Windows-only for now; Mac and Linux aren't built or tested.
@@ -35,7 +41,7 @@ Move or back up that one folder and you have the whole app's data. There's no se
 
 ## Status
 
-Phases 1 through 7 of the build (scaffold, trade log, journal, dashboard, customization, PDF export, packaging) are done, and a release build produces working Windows installers. See `docs/activity-log.md` for the build history and `documents/EdgeBook-PRD.md` for the full spec.
+Phases 1 through 7 of the build (scaffold, trade log, journal, dashboard, customization, PDF export, packaging) are done, and a release build produces working Windows installers. See `docs/activity-log.md` for the build history.
 
 This is a personal project I'm now shaping for other discretionary traders, not just my own workflow, so some UI and defaults are still settling.
 
