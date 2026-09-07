@@ -2,7 +2,7 @@
 // Reused by the trade detail view now, and the journal editor in Phase 3.
 import { saveAttachment, listAttachments, deleteAttachment } from './api.js';
 
-function blobToBase64(blob) {
+export function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result.split(',')[1]);
@@ -11,7 +11,7 @@ function blobToBase64(blob) {
   });
 }
 
-function extFor(mimeOrName) {
+export function extFor(mimeOrName) {
   const match = /(?:image\/|\.)(\w+)$/.exec(mimeOrName);
   const ext = (match ? match[1] : 'jpg').toLowerCase();
   return ext === 'jpeg' ? 'jpg' : ext;

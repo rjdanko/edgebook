@@ -37,8 +37,30 @@ function metricValue(metric, trades, dailyMap) {
     const vals = [...dailyMap.values()];
     return vals.length ? Math.min(...vals) : 0;
   }
+  if (metric === 'profit_target') return trades.reduce((s, t) => s + t.net_pl, 0);
+  if (metric === 'max_drawdown') {
+    const days = [...dailyMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+    let cumulative = 0;
+    let peak = 0;
+    let drawdown = 0;
+    for (const [, pl] of days) {
+      cumulative += pl;
+      peak = Math.max(peak, cumulative);
+      drawdown = Math.min(drawdown, cumulative - peak);
+    }
+    return drawdown;
+  }
+  if (metric === 'consistency') {
+    const vals = [...dailyMap.values()];
+    const total = vals.reduce((s, v) => s + v, 0);
+    if (total <= 0 || vals.length === 0) return 0;
+    return Math.round((Math.max(...vals) / total) * 1000) / 10;
+  }
   return 0;
 }
+
+const CHEVRON_LEFT = '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
+const CHEVRON_RIGHT = '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
 
 function renderCalendar(year, month, dailyMap) {
   const first = new Date(year, month, 1);
@@ -61,7 +83,11 @@ function renderCalendar(year, month, dailyMap) {
   }
 
   return `
-    <h2 class="section-title">${monthLabel}</h2>
+    <div class="calendar-header">
+      <button type="button" class="calendar-nav-btn" id="cal-prev" aria-label="Previous month">${CHEVRON_LEFT}</button>
+      <h2 class="section-title">${monthLabel}</h2>
+      <button type="button" class="calendar-nav-btn" id="cal-next" aria-label="Next month">${CHEVRON_RIGHT}</button>
+    </div>
     <div class="calendar-grid">
       ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => `<div class="calendar-dow">${d}</div>`).join('')}
       ${cells.join('')}
@@ -73,7 +99,8 @@ export async function render(container) {
   const [trades, objectives] = await Promise.all([listTrades(), listObjectives()]);
 
   const now = new Date();
-  const dailyMap = dailyPl(trades, now.getFullYear(), now.getMonth());
+  let viewYear = now.getFullYear();
+  let viewMonth = now.getMonth();
 
   const wins = trades.filter((t) => t.net_pl > 0).length;
   const losses = trades.filter((t) => t.net_pl < 0).length;
@@ -83,23 +110,26 @@ export async function render(container) {
   const grossWin = trades.filter((t) => t.net_pl > 0).reduce((s, t) => s + t.net_pl, 0);
   const grossLoss = Math.abs(trades.filter((t) => t.net_pl < 0).reduce((s, t) => s + t.net_pl, 0));
   const profitFactor = grossLoss > 0 ? grossWin / grossLoss : grossWin > 0 ? Infinity : 0;
+  const netPlClass = totalPl === 0 ? 'neutral-info' : moneyClass(totalPl);
 
-  const activeObjectives = objectives.filter((o) => o.active).map((o) => evalObjective(o, metricValue(o.metric, trades, dailyMap)));
-  const disciplineScore = activeObjectives.length
-    ? Math.round((activeObjectives.filter((o) => o.passed).length / activeObjectives.length) * 100)
-    : 100;
+  function draw() {
+    const dailyMap = dailyPl(trades, viewYear, viewMonth);
+    const activeObjectives = objectives.filter((o) => o.active).map((o) => evalObjective(o, metricValue(o.metric, trades, dailyMap)));
+    const disciplineScore = activeObjectives.length
+      ? Math.round((activeObjectives.filter((o) => o.passed).length / activeObjectives.length) * 100)
+      : 100;
 
-  container.innerHTML = `
+    container.innerHTML = `
     <h1 class="page-title">Dashboard</h1>
     <div class="card-grid">
       <div class="card"><span class="stat-label">Total trades</span><span class="stat-value">${trades.length}</span></div>
       <div class="card"><span class="stat-label">Win rate</span><span class="stat-value">${winRate.toFixed(1)}%</span></div>
-      <div class="card"><span class="stat-label">Net P/L</span><span class="stat-value ${moneyClass(totalPl)}">${fmtMoney(totalPl)}</span></div>
+      <div class="card"><span class="stat-label">Net P/L</span><span class="stat-value ${netPlClass}">${fmtMoney(totalPl)}</span></div>
       <div class="card"><span class="stat-label">Profit factor</span><span class="stat-value">${profitFactor === Infinity ? '&infin;' : profitFactor.toFixed(2)}</span></div>
       <div class="card"><span class="stat-label">Discipline score</span><span class="stat-value">${disciplineScore}%</span></div>
     </div>
 
-    ${renderCalendar(now.getFullYear(), now.getMonth(), dailyMap)}
+    ${renderCalendar(viewYear, viewMonth, dailyMap)}
 
     <h2 class="section-title">Objectives</h2>
     <table class="data-table">
@@ -124,4 +154,18 @@ export async function render(container) {
       </tbody>
     </table>
   `;
+
+    container.querySelector('#cal-prev').addEventListener('click', () => {
+      viewMonth -= 1;
+      if (viewMonth < 0) { viewMonth = 11; viewYear -= 1; }
+      draw();
+    });
+    container.querySelector('#cal-next').addEventListener('click', () => {
+      viewMonth += 1;
+      if (viewMonth > 11) { viewMonth = 0; viewYear += 1; }
+      draw();
+    });
+  }
+
+  draw();
 }

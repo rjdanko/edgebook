@@ -24,28 +24,39 @@ async function tradeSection(t) {
   `;
 }
 
+async function resolveJournalImages(content, entryId) {
+  if (!content || !content.includes('data-attachment-id')) return content;
+  const attachments = await listAttachments('journal', entryId);
+  const byId = new Map(attachments.map((a) => [a.id, a.data_url]));
+  return content.replace(/<img([^>]*)data-attachment-id="([^"]+)"([^>]*)>/g, (match, before, id, after) => {
+    const url = byId.get(id);
+    return url ? `<img${before}src="${url}"${after}>` : match;
+  });
+}
+
 async function journalSection(e) {
-  const images = await listAttachments('journal', e.id);
+  const content = await resolveJournalImages(e.content, e.id);
   return `
     <section class="export-item">
       <h2>${esc(e.date)} &middot; ${esc(e.title) || 'Untitled'}${e.type ? ` (${esc(e.type)})` : ''}</h2>
-      ${e.content ? `<p>${esc(e.content).replace(/\n/g, '<br>')}</p>` : ''}
-      ${images.length ? `<div class="export-images">${images.map((i) => `<img src="${i.data_url}" />`).join('')}</div>` : ''}
+      ${content ? `<div class="export-journal-content">${content}</div>` : ''}
     </section>
   `;
 }
 
 const PRINT_CSS = `
-  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #1f1f1f; margin: 32px; }
-  h1 { font-size: 22px; }
-  .export-item { break-inside: avoid; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid #ddd; }
-  .export-item h2 { font-size: 16px; margin-bottom: 8px; }
-  .export-item h3 { font-size: 12px; text-transform: uppercase; color: #666; margin: 12px 0 2px; }
-  .export-fields { border-collapse: collapse; margin-bottom: 8px; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #1a1a1a; margin: 32px; }
+  h1 { font-size: 22px; font-weight: 650; letter-spacing: -0.02em; margin-bottom: 20px; }
+  .export-item { break-inside: avoid; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid #e5e5e5; }
+  .export-item h2 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .export-item h3 { font-size: 12px; font-weight: 500; color: #666; margin: 12px 0 2px; }
+  .export-fields { border-collapse: collapse; margin-bottom: 8px; font-variant-numeric: tabular-nums; }
   .export-fields th { text-align: left; color: #666; font-weight: 500; padding: 2px 8px 2px 0; }
   .export-fields td { padding: 2px 16px 2px 0; }
   .export-images { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .export-images img { max-width: 260px; max-height: 180px; object-fit: contain; border: 1px solid #ddd; }
+  .export-images img { max-width: 260px; max-height: 180px; object-fit: contain; border: 1px solid #e5e5e5; border-radius: 6px; }
+  .export-journal-content { font-size: 13px; line-height: 1.6; }
+  .export-journal-content img { max-width: 100%; border: 1px solid #e5e5e5; border-radius: 6px; margin: 8px 0; }
 `;
 
 async function openPrintWindow(title, sectionsHtml) {
@@ -65,6 +76,18 @@ export async function exportTrade(trade) {
 
 export async function exportJournalEntry(entry) {
   await openPrintWindow(`Journal - ${entry.date}`, await journalSection(entry));
+}
+
+export async function exportSelectedTrades(trades) {
+  const parts = [];
+  for (const t of trades) parts.push(await tradeSection(t));
+  await openPrintWindow(`EdgeBook Export - ${trades.length} trade${trades.length === 1 ? '' : 's'}`, parts.join(''));
+}
+
+export async function exportSelectedJournalEntries(entries) {
+  const parts = [];
+  for (const e of entries) parts.push(await journalSection(e));
+  await openPrintWindow(`EdgeBook Export - ${entries.length} entr${entries.length === 1 ? 'y' : 'ies'}`, parts.join(''));
 }
 
 // kind: 'trades' | 'journal' | 'both'. from/to are 'YYYY-MM-DD' strings, or empty for no bound.

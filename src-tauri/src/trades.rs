@@ -31,6 +31,7 @@ pub struct TradeInput {
     pub session: String,
     pub net_pl: f64,
     pub lots: f64,
+    #[serde(default)]
     pub is_breakeven: bool,
     pub confluences: String,
     pub narrative: String,

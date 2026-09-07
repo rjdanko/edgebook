@@ -82,12 +82,11 @@ fn migrate(conn: &Connection) -> rusqlite::Result<()> {
 fn seed_defaults(conn: &Connection) -> rusqlite::Result<()> {
     let trade_fields = [
         ("date", "Date", "date"),
-        ("symbol", "Symbol", "text"),
+        ("symbol", "Symbol", "tag"),
         ("position", "Position", "enum"),
-        ("session", "Session", "text"),
+        ("session", "Session", "tag"),
         ("net_pl", "Net P/L", "number"),
         ("lots", "Lots", "number"),
-        ("is_breakeven", "Breakeven", "boolean"),
         ("confluences", "Confluences", "long_text"),
         ("narrative", "Narrative", "long_text"),
         ("emotions", "Emotions", "long_text"),

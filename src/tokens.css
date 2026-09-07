@@ -1,18 +1,46 @@
-/* Design tokens. Light palette on :root; dark overrides only what changes.
+/* Design tokens - clean, minimal, modern product UI (Linear + Notion craft bar).
+   Light palette on :root; dark overrides only what changes.
    Order matters: system-preference block first, explicit [data-theme] second,
    so an explicit choice always wins over prefers-color-scheme. */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("fonts/inter-var.woff2") format("woff2-variations");
+}
+
 :root {
-  --bg-canvas: #ffffff;
-  --bg-surface: #f7f7f5;
-  --border-subtle: #e9e9e7;
-  --text-primary: #1f1f1f;
-  --text-secondary: #6b6b68;
-  --text-disabled: #b8b8b5;
-  --accent: #2a9d8f;
-  --accent-fg: #ffffff;
-  --positive: #1e8e5a;
-  --negative: #d1453b;
-  --neutral-warn: #b8860b;
+  --bg-canvas: oklch(99.2% 0.002 260);
+  --bg-surface: oklch(97% 0.003 260);
+  --bg-surface-hover: oklch(94.5% 0.004 260);
+  --border-subtle: oklch(91% 0.004 260);
+  --border-strong: oklch(84% 0.006 260);
+
+  --text-primary: oklch(21% 0.01 260);
+  --text-secondary: oklch(46% 0.012 260);
+  --text-disabled: oklch(64% 0.01 260);
+
+  /* Accent, user-customizable in Settings; default a confident indigo (Linear-adjacent) */
+  --accent: oklch(47% 0.18 275);
+  --accent-fg: oklch(99% 0 0);
+
+  --positive: oklch(46% 0.15 145);
+  --negative: oklch(50% 0.21 25);
+  --neutral-warn: oklch(52% 0.15 75);
+  --info: oklch(48% 0.17 250);
+
+  /* Fixed tag palette (Notion-style) - independent of the user's accent choice */
+  --tag-gray: oklch(50% 0.01 260);
+  --tag-brown: oklch(45% 0.05 55);
+  --tag-orange: oklch(55% 0.16 55);
+  --tag-yellow: oklch(65% 0.14 95);
+  --tag-green: oklch(46% 0.15 145);
+  --tag-blue: oklch(48% 0.17 250);
+  --tag-purple: oklch(50% 0.18 300);
+  --tag-pink: oklch(58% 0.18 350);
+  --tag-red: oklch(50% 0.21 25);
 
   --space-1: 4px;
   --space-2: 8px;
@@ -22,45 +50,93 @@
   --space-6: 32px;
   --space-7: 48px;
 
-  --text-display: 600 28px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --text-heading: 600 18px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --text-body: 400 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --text-label: 500 13px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --text-caption: 400 12px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --text-display: 650 26px/1.3 var(--font-ui);
+  --text-heading: 600 15px/1.4 var(--font-ui);
+  --text-body: 400 14px/1.55 var(--font-ui);
+  --text-label: 500 12.5px/1.4 var(--font-ui);
+  --text-caption: 400 12px/1.5 var(--font-ui);
+  --text-numeral: 500 14px/1.4 var(--font-ui);
 
   --radius-button: 6px;
-  --radius-card: 8px;
-  --motion-fast: 130ms ease-out;
+  --radius-card: 10px;
+  --radius-input: 6px;
+
+  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 4%);
+  --shadow-md: 0 4px 16px oklch(0% 0 0 / 8%), 0 1px 2px oklch(0% 0 0 / 6%);
+
+  --motion-fast: 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-med: 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --z-dropdown: 20;
+  --z-sticky: 30;
+  --z-modal-backdrop: 40;
+  --z-modal: 50;
+  --z-toast: 60;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg-canvas: #191919;
-    --bg-surface: #202020;
-    --border-subtle: #2f2f2f;
-    --text-primary: #ededec;
-    --text-secondary: #9b9b98;
-    --text-disabled: #5c5c5a;
-    --positive: #4caf7d;
-    --negative: #e5675f;
-    --neutral-warn: #d4a017;
+    --bg-canvas: oklch(17% 0.006 260);
+    --bg-surface: oklch(21% 0.007 260);
+    --bg-surface-hover: oklch(25% 0.008 260);
+    --border-subtle: oklch(28% 0.008 260);
+    --border-strong: oklch(36% 0.01 260);
+    --text-primary: oklch(95% 0.004 260);
+    --text-secondary: oklch(68% 0.012 260);
+    --text-disabled: oklch(48% 0.012 260);
+    --accent: oklch(68% 0.16 275);
+    --accent-fg: oklch(12% 0 0);
+    --positive: oklch(68% 0.15 145);
+    --negative: oklch(68% 0.18 25);
+    --neutral-warn: oklch(72% 0.13 80);
+    --info: oklch(70% 0.15 250);
+    --tag-gray: oklch(68% 0.01 260);
+    --tag-brown: oklch(62% 0.06 55);
+    --tag-orange: oklch(70% 0.15 55);
+    --tag-yellow: oklch(78% 0.13 95);
+    --tag-green: oklch(68% 0.15 145);
+    --tag-blue: oklch(70% 0.15 250);
+    --tag-purple: oklch(70% 0.16 300);
+    --tag-pink: oklch(72% 0.16 350);
+    --tag-red: oklch(68% 0.18 25);
+    --shadow-sm: 0 1px 2px oklch(0% 0 0 / 20%);
+    --shadow-md: 0 4px 16px oklch(0% 0 0 / 32%), 0 1px 2px oklch(0% 0 0 / 24%);
   }
 }
 
 :root[data-theme="dark"] {
-  --bg-canvas: #191919;
-  --bg-surface: #202020;
-  --border-subtle: #2f2f2f;
-  --text-primary: #ededec;
-  --text-secondary: #9b9b98;
-  --text-disabled: #5c5c5a;
-  --positive: #4caf7d;
-  --negative: #e5675f;
-  --neutral-warn: #d4a017;
+  --bg-canvas: oklch(17% 0.006 260);
+  --bg-surface: oklch(21% 0.007 260);
+  --bg-surface-hover: oklch(25% 0.008 260);
+  --border-subtle: oklch(28% 0.008 260);
+  --border-strong: oklch(36% 0.01 260);
+  --text-primary: oklch(95% 0.004 260);
+  --text-secondary: oklch(68% 0.012 260);
+  --text-disabled: oklch(48% 0.012 260);
+  --accent: oklch(68% 0.16 275);
+  --accent-fg: oklch(12% 0 0);
+  --positive: oklch(68% 0.15 145);
+  --negative: oklch(68% 0.18 25);
+  --neutral-warn: oklch(72% 0.13 80);
+  --info: oklch(70% 0.15 250);
+  --tag-gray: oklch(68% 0.01 260);
+  --tag-brown: oklch(62% 0.06 55);
+  --tag-orange: oklch(70% 0.15 55);
+  --tag-yellow: oklch(78% 0.13 95);
+  --tag-green: oklch(68% 0.15 145);
+  --tag-blue: oklch(70% 0.15 250);
+  --tag-purple: oklch(70% 0.16 300);
+  --tag-pink: oklch(72% 0.16 350);
+  --tag-red: oklch(68% 0.18 25);
+  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 20%);
+  --shadow-md: 0 4px 16px oklch(0% 0 0 / 32%), 0 1px 2px oklch(0% 0 0 / 24%);
 }
 
 @media (prefers-reduced-motion: reduce) {
   * {
     transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }

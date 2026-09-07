@@ -41,6 +41,18 @@ export function listObjectives() {
   return invoke('list_objectives');
 }
 
+export function createObjective(input) {
+  return invoke('create_objective', { input });
+}
+
+export function updateObjective(id, label, targetValue, comparison, metric, active) {
+  return invoke('update_objective', { id, label, targetValue, comparison, metric, active });
+}
+
+export function deleteObjective(id) {
+  return invoke('delete_objective', { id });
+}
+
 export function updateSetting(key, value) {
   return invoke('update_setting', { key, value });
 }
